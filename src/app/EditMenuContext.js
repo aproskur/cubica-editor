@@ -9,8 +9,6 @@ export const EditMenuProvider = ({ children }) => {
     // State to store information about the clicked component
     const [clickedComponent, setClickedComponent] = useState(null);
 
-    // State to store the original background color before any changes
-    const [originalBackgroundColor, setOriginalBackgroundColor] = useState('#ffffff');
 
     // State to store the current background color
     const [backgroundColor, setBackgroundColor] = useState('#ffffff');
@@ -20,10 +18,6 @@ export const EditMenuProvider = ({ children }) => {
         setBackgroundColor(newColor);
     };
 
-    // Function to set the original background color when the EditMenu is opened
-    const setOriginalColor = () => {
-        setOriginalBackgroundColor(backgroundColor);
-    };
 
     // Function to toggle the EditMenu and set the clicked component
     const toggleEditMenu = (component) => {
@@ -32,9 +26,6 @@ export const EditMenuProvider = ({ children }) => {
 
         // Set the clicked component in the state
         setClickedComponent(component);
-
-        // Set the original background color
-        setOriginalColor();
     };
 
     // State to store edited text
@@ -104,6 +95,45 @@ export const EditMenuProvider = ({ children }) => {
         return sceneWithoutComponent; // Return the updated scene
     };
 
+    // Function to generate a unique ID
+    const generateUniqueId = () => {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    };
+
+
+    // Function to add a new component
+    const addComponent = (scene, parentComponentId, newComponentType) => {
+        console.log(`I AM GOING TO ADD A NEW ${newComponentType}COMPONENT to Compoent ${parentComponentId}!!!!!!!!`);
+        const newComponent = {
+            component: newComponentType,
+            id: generateUniqueId(),
+            css: {
+                width: '100px',
+                height: '40px',
+                backgroundColor: '#4CAF50',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                marginTop: '10px',
+            },
+        };
+
+        console.log("ID OF NEW COMPONENT fromAddComponent func", newComponent.id)
+
+        const updatedScene = updateComponentInSceneById(
+            scene,
+            parentComponentId,
+            'children',
+            [...scene.children, newComponent]
+        );
+
+        console.log("UPDATED SCENE from addComponent func", updatedScene);
+
+        return updatedScene;
+    };
+
+
 
 
     // Provide the values (state and functions) to the components in the context
@@ -118,6 +148,7 @@ export const EditMenuProvider = ({ children }) => {
             backgroundColor,
             updateBackgroundColor,
             deleteComponentInSceneById,
+            addComponent
         }}>
             {children}
         </EditMenuContext.Provider>

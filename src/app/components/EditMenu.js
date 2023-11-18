@@ -1,5 +1,9 @@
-'use client';
+//The EditMenu component renders options based on the type of the clicked component. 
+//It allows editing text, changing background color, and deleting components.
+//It uses a color picker (ColorPicker) for changing background color.
+//The selected option determines which functionality to trigger.
 
+'use client';
 import React from 'react';
 import styled from 'styled-components';
 import { useEditMenu } from 'src/app/EditMenuContext.js';
@@ -22,9 +26,8 @@ const StyledEditMenu = styled.div
     display: ${(props) => (props.isOpen ? 'block' : 'none')};
     
 `;
-// ... (existing imports)
 
-const EditMenu = ({ updateTextCallback, updateBackgroundCallback, deleteComponentCallback }) => {
+const EditMenu = ({ updateTextCallback, updateBackgroundCallback, deleteComponentCallback, addComponentCallback }) => {
     const {
         isEditMenuOpen,
         toggleEditMenu,
@@ -56,6 +59,11 @@ const EditMenu = ({ updateTextCallback, updateBackgroundCallback, deleteComponen
             console.log('DELETE COMPONENT');
             setSelectedOption('deletecomponent');
             deleteComponentCallback(clickedComponent.id);
+        }
+        if (option === 'addComponent') {
+            console.log('ADD COMPONENT');
+            setSelectedOption('addcomponent');
+            addComponentCallback(clickedComponent.id, "gamebutton");
         }
 
 
@@ -94,6 +102,9 @@ const EditMenu = ({ updateTextCallback, updateBackgroundCallback, deleteComponen
                                     <div onClick={() => handleOptionClick('gamescreenOption2')}>
                                         Gamescreen Option 2
                                     </div>
+                                    <div onClick={() => handleOptionClick('addComponent')}>
+                                        Добавить КНОПКУ
+                                    </div>
                                     {/* Add more gamescreen options as needed */}
                                 </>
                             )}
@@ -106,7 +117,10 @@ const EditMenu = ({ updateTextCallback, updateBackgroundCallback, deleteComponen
                                         Поменять фон
                                     </div>
                                     <div onClick={() => handleOptionClick('deletecomponent')}>
-                                        Удалить кнопку
+                                        Удалить карточку
+                                    </div>
+                                    <div onClick={() => handleOptionClick('addComponent')}>
+                                        Добавить КНОПКУ
                                     </div>
                                     {/* Add more card options as needed */}
                                 </>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function GameText({ onClick, ...props }) {
+export default function GameText({ onClick, children, ...props }) {
 
     const handleClick = (event) => {
         if (onClick) {
@@ -10,8 +10,11 @@ export default function GameText({ onClick, ...props }) {
     };
 
     return (
-        <p key={props.id} style={props.style} onClick={handleClick}>
-            {props.text}
-        </p>
+        <div>
+            <p key={props.id} style={props.style} onClick={handleClick}>
+                {props.text}
+            </p>
+            {children}
+        </div>
     );
 }

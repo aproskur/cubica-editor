@@ -12,97 +12,8 @@ import EditMenu from '../components/EditMenu.js';
 import { useEditMenu } from '../EditMenuContext.js';
 import { useState } from 'react';
 
-
-
-
 const test = {
-  "component": "GameScreen",
-  "id": "1",
-  "css": {
-    "display": "grid",
-    "gridTemplateColumns": "20% 70% 10%",
-    "gridTemplateRows": "20% auto",
-    "background": "url('./images/arctic-background.png') no-repeat",
-    "backgroundSize": "cover",
-    "height": "100vh",
-    "width": "100%",
-    "backgroundSize": "cover"
-  },
-  "children": [
-    {
-      "component": "card",
-      "id": "2",
-      "text": "Антарктика - это огромный мир из воды, льда и снега, настолько огромный, что никто из его обитателей, кроме, пожалуй, китов, не представляет его размеров. Кроме гигантского материка,",
-      "css": {
-        "width": "300px",
-        "height": "300px",
-        "gridColumn": "2",
-        "gridRow": "2",
-        "padding": "1.25em 1em",
-        "backgroundColor": "rgba(162, 217, 247, 0.5)",
-        "color": "#fff",
-        "fontWeight": "bold",
-        "fontSize": "1rem",
-        "overflow": "scroll",
-      }
-    },
-  ]
-}
-
-const test2 = {
-  "component": "GameScreen",
-  "id": "1",
-  "css": {
-    "display": "grid",
-    "gridTemplateColumns": "20% 70% 10%",
-    "gridTemplateRows": "20% auto",
-    "background": "url('./images/arctic-background.png') no-repeat",
-    "backgroundSize": "cover",
-    "height": "100vh",
-    "width": "100%",
-    "backgroundSize": "cover"
-  },
-  "children": [
-    {
-      "component": "card",
-      "id": "2",
-      "text": "Антарктика - это огромный мир из воды, льда и снега, настолько огромный, что никто из его обитателей, кроме, пожалуй, китов, не представляет его размеров. Кроме гигантского материка,",
-      "css": {
-        "width": "300px",
-        "height": "300px",
-        "gridColumn": "2",
-        "gridRow": "2",
-        "padding": "1.25em 1em",
-        "backgroundColor": "rgba(162, 217, 247, 0.5)",
-        "color": "#fff",
-        "fontWeight": "bold",
-        "fontSize": "1rem",
-        "overflow": "scroll",
-      },
-      "children": [
-        {
-          "component": "gamebutton",
-          "id": "3",
-          "text": "Click me!",
-          "css": {
-            "width": "100px",
-            "height": "40px",
-            "backgroundColor": "#4CAF50",
-            "color": "#fff",
-            "border": "none",
-            "borderRadius": "5px",
-            "cursor": "pointer",
-            "marginTop": "10px"
-          }
-        }
-      ]
-    }
-  ]
-}
-
-
-const test_3 = {
-  "component": "GameScreen",
+  "component": "gamescreen",
   "id": "1",
   "css": {
     "display": "grid",
@@ -183,9 +94,14 @@ const StyledEditorScreen = styled.div`
 
 export default function EditorScreen(props) {
 
-  const [scene, setScene] = useState(test_3);
+  const [scene, setScene] = useState(test);
 
-  const { isEditMenuOpen, toggleEditMenu, updateComponentInSceneById, deleteComponentInSceneById } = useEditMenu();
+  const { isEditMenuOpen,
+    toggleEditMenu,
+    updateComponentInSceneById,
+    deleteComponentInSceneById,
+    addComponent
+  } = useEditMenu();
 
   const handleComponentClick = (component) => {
     console.log(`log from "handleCOmponentClicked" COMPONENT CLICKED: ${component.name} (ID: ${component.id})`);
@@ -214,6 +130,15 @@ export default function EditorScreen(props) {
     setScene(updatedScene);
   };
 
+  const addChildComponent = (componentId, newComponentType) => {
+    console.log('from add comp in Editor Screen: Adding child comp into comp ID:', componentId);
+    const updatedScene = addComponent(scene, componentId, newComponentType);
+    setScene(updatedScene);
+  }
+
+
+  //The renderComponent function recursively renders components based on the provided JSON structure. 
+  //It uses a componentMap to map component names to React components
 
   const renderComponent = (c) => {
     const child_comps_arr = c.children || [];
@@ -240,7 +165,8 @@ export default function EditorScreen(props) {
         alt,
         content,
       };
-
+      //The createElement function is used to dynamically create React elements based on the component type. 
+      //CreateElement is a REACT function, from react library
       return createElement(Component, props, ch);
     } else {
       console.log("ERROR");
@@ -258,7 +184,12 @@ export default function EditorScreen(props) {
         {renderComponent(scene)}
       </div>
       {/* Render the EditMenu component */}
-      <EditMenu isOpen={isEditMenuOpen} onToggleMenu={toggleEditMenu} updateTextCallback={updateText} updateBackgroundCallback={updateColor} deleteComponentCallback={deleteComponent} />
+      <EditMenu isOpen={isEditMenuOpen}
+        onToggleMenu={toggleEditMenu}
+        updateTextCallback={updateText}
+        updateBackgroundCallback={updateColor}
+        deleteComponentCallback={deleteComponent}
+        addComponentCallback={addChildComponent} />
     </StyledEditorScreen>
   );
 }

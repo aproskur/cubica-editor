@@ -3,6 +3,9 @@ import styled from 'styled-components';
 import { useSidebar } from 'src/app/SidebarContext.js';
 import GameCard from '../library/GameCard.js'
 import GameScreen from '../library/GameScreen.js'
+import GameButton from '../library/GameButton.js'
+import GameImage from '../library/GameImage.js'
+import GameText from '../library/GameText.js'
 import { createElement } from 'react';
 import scene_1 from '../data/scene_cards_topsidebar.json'
 import EditMenu from '../components/EditMenu.js';
@@ -11,8 +14,9 @@ import { useState } from 'react';
 
 
 
+
 const test = {
-  "component": "gamescreen",
+  "component": "GameScreen",
   "id": "1",
   "css": {
     "display": "grid",
@@ -45,6 +49,129 @@ const test = {
   ]
 }
 
+const test2 = {
+  "component": "GameScreen",
+  "id": "1",
+  "css": {
+    "display": "grid",
+    "gridTemplateColumns": "20% 70% 10%",
+    "gridTemplateRows": "20% auto",
+    "background": "url('./images/arctic-background.png') no-repeat",
+    "backgroundSize": "cover",
+    "height": "100vh",
+    "width": "100%",
+    "backgroundSize": "cover"
+  },
+  "children": [
+    {
+      "component": "card",
+      "id": "2",
+      "text": "Антарктика - это огромный мир из воды, льда и снега, настолько огромный, что никто из его обитателей, кроме, пожалуй, китов, не представляет его размеров. Кроме гигантского материка,",
+      "css": {
+        "width": "300px",
+        "height": "300px",
+        "gridColumn": "2",
+        "gridRow": "2",
+        "padding": "1.25em 1em",
+        "backgroundColor": "rgba(162, 217, 247, 0.5)",
+        "color": "#fff",
+        "fontWeight": "bold",
+        "fontSize": "1rem",
+        "overflow": "scroll",
+      },
+      "children": [
+        {
+          "component": "gamebutton",
+          "id": "3",
+          "text": "Click me!",
+          "css": {
+            "width": "100px",
+            "height": "40px",
+            "backgroundColor": "#4CAF50",
+            "color": "#fff",
+            "border": "none",
+            "borderRadius": "5px",
+            "cursor": "pointer",
+            "marginTop": "10px"
+          }
+        }
+      ]
+    }
+  ]
+}
+
+
+const test_3 = {
+  "component": "GameScreen",
+  "id": "1",
+  "css": {
+    "display": "grid",
+    "gridTemplateColumns": "20% 70% 10%",
+    "gridTemplateRows": "20% auto",
+    "background": "url('./images/arctic-background.png') no-repeat",
+    "backgroundSize": "cover",
+    "height": "100vh",
+    "width": "100%",
+    "backgroundSize": "cover"
+  },
+  "children": [
+    {
+      "component": "card",
+      "id": "2",
+      "css": {
+        "width": "300px",
+        "height": "300px",
+        "gridColumn": "2",
+        "gridRow": "2",
+        "padding": "1.25em 1em",
+        "backgroundColor": "rgba(162, 217, 247, 0.5)",
+        "color": "#fff",
+        "fontWeight": "bold",
+        "fontSize": "1rem",
+        "overflow": "scroll",
+      },
+      "children": [
+        {
+          "component": "gameimage",
+          "id": "4",
+          "src": "./images/vote.jpg",
+          "alt": "Game Image",
+          "css": {
+            "width": "100%",
+            "height": "auto",
+            "marginTop": "10px"
+          }
+        },
+        {
+          "component": "gametext",
+          "id": "5",
+          "text": "Антарктика - это огромный мир из воды, льда и снега, настолько огромный, что никто из его обитателей, кроме, пожалуй, китов, не представляет его размеров. Кроме гигантского материка,",
+          "css": {
+
+          }
+        },
+        {
+          "component": "gamebutton",
+          "id": "3",
+          "text": "Click me!",
+          "css": {
+            "width": "100px",
+            "height": "40px",
+            "backgroundColor": "#4CAF50",
+            "color": "#fff",
+            "border": "none",
+            "borderRadius": "5px",
+            "cursor": "pointer",
+            "marginTop": "10px"
+          }
+        }
+      ]
+    }
+  ]
+};
+
+
+
 const StyledEditorScreen = styled.div`
   height: 100vh;
   width: 96%;
@@ -56,12 +183,12 @@ const StyledEditorScreen = styled.div`
 
 export default function EditorScreen(props) {
 
-  const [scene, setScene] = useState(test);
+  const [scene, setScene] = useState(test_3);
 
-  const { isEditMenuOpen, toggleEditMenu, updateComponentInSceneById } = useEditMenu();
+  const { isEditMenuOpen, toggleEditMenu, updateComponentInSceneById, deleteComponentInSceneById } = useEditMenu();
 
   const handleComponentClick = (component) => {
-    //console.log(`COMPONENT CLICKED: ${component.name} (ID: ${component.id})`);
+    console.log(`log from "handleCOmponentClicked" COMPONENT CLICKED: ${component.name} (ID: ${component.id})`);
     toggleEditMenu(component);
   };
 
@@ -73,21 +200,46 @@ export default function EditorScreen(props) {
     setScene(updatedScene);
   };
 
+  const updateColor = (componentId, newColor) => {
+    console.log('from updateColor in Editor Screen: Updated Component ID:', componentId);
+    console.log('from updateColor in Editor Screen: NewColor:', newColor);
+    const updatedScene = updateComponentInSceneById(scene, componentId, 'css.backgroundColor', newColor);
+    console.log('UPDATED SCENE!!!!!!:', updatedScene);
+    setScene(updatedScene);
+  };
+
+  const deleteComponent = (componentId) => {
+    console.log('from delete comp in Editor Screen: Delete Component ID:', componentId);
+    const updatedScene = deleteComponentInSceneById(scene, componentId);
+    setScene(updatedScene);
+  };
+
 
   const renderComponent = (c) => {
     const child_comps_arr = c.children || [];
-    const ch = child_comps_arr.map(x => renderComponent(x));
+    const ch = child_comps_arr.map((x) => renderComponent(x));
 
     const componentMap = {
       gamescreen: GameScreen,
       card: GameCard,
+      gamebutton: GameButton,
+      gameimage: GameImage,
+      gametext: GameText,
     };
 
     const Component = componentMap[c.component];
 
     if (Component) {
-      const { css, text, id } = c;
-      const props = { style: css, onClick: () => handleComponentClick({ id, name: c.component }), text, id };
+      const { css, text, id, src, alt, content } = c;
+      const props = {
+        style: css,
+        onClick: () => handleComponentClick({ id, name: c.component }),
+        text,
+        id,
+        src,
+        alt,
+        content,
+      };
 
       return createElement(Component, props, ch);
     } else {
@@ -99,13 +251,14 @@ export default function EditorScreen(props) {
     }
   };
 
+
   return (
     <StyledEditorScreen>
       <div className="editor-components-container">
         {renderComponent(scene)}
       </div>
       {/* Render the EditMenu component */}
-      <EditMenu isOpen={isEditMenuOpen} onToggleMenu={toggleEditMenu} updateTextCallback={updateText} />
+      <EditMenu isOpen={isEditMenuOpen} onToggleMenu={toggleEditMenu} updateTextCallback={updateText} updateBackgroundCallback={updateColor} deleteComponentCallback={deleteComponent} />
     </StyledEditorScreen>
   );
 }

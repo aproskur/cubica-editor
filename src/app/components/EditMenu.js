@@ -6,8 +6,8 @@
 'use client';
 import React from 'react';
 import styled from 'styled-components';
-import { useEditMenu } from 'src/app/EditMenuContext.js';
-import { useState } from 'react';
+import { useApp } from 'src/app/AppContext.js';
+import { useState, useEffect } from 'react';
 import ColorPicker from 'src/app/components/ColorPicker.js'
 
 const StyledEditMenu = styled.div
@@ -30,37 +30,52 @@ const StyledEditMenu = styled.div
 const EditMenu = ({ updateTextCallback, updateBackgroundCallback, deleteComponentCallback, addComponentCallback }) => {
     const {
         isEditMenuOpen,
+        editedText,
+        textareaData,
+        triggerEditMode,
         toggleEditMenu,
         clickedComponent,
+        updateCurrentColor,
         backgroundColor,
-    } = useEditMenu();
+    } = useApp();
+
+    console.log('Textarea Data in EditorMenu:', textareaData);
 
     // State to manage the selected option
     const [selectedOption, setSelectedOption] = useState(null);
 
-    // Function to handle option clicks
-    const handleOptionClick = (option) => {
+
+    // Function to handle clicks on EditMenu options
+    const handleOptionClick = (option, textareaData) => {
         console.log(`Option clicked: ${option}`);
         console.log('Clicked Component:', clickedComponent);
 
         // Trigger specific actions based on the selected option
         if (option === 'editText') {
-            const newText = prompt('Enter new text:');
-            console.log('New Text:', newText);
-            updateTextCallback(clickedComponent.id, newText);
+            /*const newText = prompt('Enter new text:');
+            console.log('New Text:', newText);*/
+            const componentId = clickedComponent.id
+            triggerEditMode(componentId);
+            console.log("CallingTextCallback");
+            console.log(`DATA to pass into  updateTextCallback${componentId} ${textareaData}`);
+            updateTextCallback(componentId, textareaData);
+
         }
-        if (option === 'changeBackgroundColor') {
+        else if (option === 'changeBackgroundColor') {
+            const currentColor = clickedComponent.css.backgroundColor
+            console.log("Current color", currentColor);
+            updateCurrentColor(currentColor) //to update color, when color picker is opened
             console.log('CHANGE BACKGROUND COLOR');
             setSelectedOption('changeBackgroundColor');
-            console.log('new color', backgroundColor);
             updateBackgroundCallback(clickedComponent.id, backgroundColor);
         }
-        if (option === 'deletecomponent') {
+        else if (option === 'deletecomponent') {
             console.log('DELETE COMPONENT');
             setSelectedOption('deletecomponent');
+
             deleteComponentCallback(clickedComponent.id);
         }
-        if (option === 'addComponent') {
+        else if (option === 'addComponent') {
             console.log('ADD COMPONENT');
             setSelectedOption('addcomponent');
             addComponentCallback(clickedComponent.id, "gamebutton");

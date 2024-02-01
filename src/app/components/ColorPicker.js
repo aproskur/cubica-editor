@@ -1,24 +1,29 @@
+
+import React, { useEffect, useState } from 'react';
 import { HexColorPicker } from 'react-colorful';
-import { useEditMenu } from '../EditMenuContext';
-import { useState, useEffect } from 'react';
+import { useApp } from '../AppContext';
 
 const ColorPicker = () => {
-    const { backgroundColor, updateBackgroundColor, clickedComponent } = useEditMenu();
-    const [color, setColor] = useState(backgroundColor);
+    const { updateCurrentColor, clickedComponent } = useApp();
+    const [color, setColor] = useState(clickedComponent ? clickedComponent.css.backgroundColor : '#234567');
 
     // Update the color when backgroundColor changes in the context
     useEffect(() => {
-        setColor(backgroundColor);
-    }, [backgroundColor, clickedComponent]);
+        // Initialize the color with the background color of the clicked component
+        if (clickedComponent) {
+            setColor(clickedComponent.css.backgroundColor || '#234567');
+        }
+    }, [clickedComponent]);
 
     const handleChange = (newColor) => {
         setColor(newColor);
-        updateBackgroundColor(newColor);
+        updateCurrentColor(newColor);
     };
 
     return <HexColorPicker color={color} onChange={handleChange} />;
 };
 
 export default ColorPicker;
+
 
 

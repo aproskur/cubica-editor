@@ -1,21 +1,42 @@
-import React from 'react';
+// GameButton.js
+import React, { useState, useEffect } from 'react';
 
-export default function GameButton({ onClick, ...props }) {
+export default function GameButton({ onClick, isEditMode, onTextChange, ...props }) {
+  const [editedText, setEditedText] = useState(props.text || '');
 
-  // handleClick is a function that is called when the card is clicked.
+  useEffect(() => {
+    setEditedText(props.text || '');
+  }, [props.text]);
+
   const handleClick = (event) => {
-    // If onClick is provided as a prop, call it.
     if (onClick) {
       onClick();
-      // To avoid click on the elements that are stacked under.
       event.stopPropagation();
     }
   };
 
+  const handleTextChange = (e) => {
+    const newText = e.target.value;
+    setEditedText(newText);
+
+    if (onTextChange) {
+      onTextChange(newText);
+    }
+  };
 
   return (
-    <button key={props.id} style={props.style} onClick={handleClick}>
-      {props.text}
-    </button>
+    <div>
+      {isEditMode ? (
+        <textarea
+          value={editedText}
+          onChange={handleTextChange}
+          onBlur={() => onTextChange(editedText)} // Optionally save changes on blur
+        />
+      ) : (
+        <button key={props.id} style={props.style} onClick={handleClick}>
+          {props.text}
+        </button>
+      )}
+    </div>
   );
 }

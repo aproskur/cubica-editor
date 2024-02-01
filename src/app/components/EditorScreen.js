@@ -9,7 +9,7 @@ import GameText from '../library/GameText.js'
 import { createElement } from 'react';
 import scene_1 from '../data/scene_cards_topsidebar.json'
 import EditMenu from '../components/EditMenu.js';
-import { useEditMenu } from '../EditMenuContext.js';
+import { useApp } from '../AppContext.js';
 import { useState } from 'react';
 
 const test = {
@@ -101,7 +101,7 @@ export default function EditorScreen(props) {
     updateComponentInSceneById,
     deleteComponentInSceneById,
     addComponent
-  } = useEditMenu();
+  } = useApp();
 
   const handleComponentClick = (component) => {
     console.log(`log from "handleCOmponentClicked" COMPONENT CLICKED: ${component.name} (ID: ${component.id})`);
@@ -158,7 +158,7 @@ export default function EditorScreen(props) {
       const { css, text, id, src, alt, content } = c;
       const props = {
         style: css,
-        onClick: () => handleComponentClick({ id, name: c.component }),
+        onClick: () => handleComponentClick({ id, name: c.component, css }),
         text,
         id,
         src,
